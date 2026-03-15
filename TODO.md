@@ -33,12 +33,12 @@ Architecture document (read this first): ./ARCHITECTURE.md
 
 ## 4. Global Hotkey (`hotkey.rs`)
 
-- [ ] **4.1** Create a `CGEventTap` with `kCGEventKeyDown` mask using `CGEvent::tapCreate`
-- [ ] **4.2** Implement the tap callback: inspect keycode and modifier flags for the hard-coded
+- [x] **4.1** Create a `CGEventTap` with `kCGEventKeyDown` mask using `CGEvent::tapCreate`
+- [x] **4.2** Implement the tap callback: inspect keycode and modifier flags for the hard-coded
       combo (default: ⌥+Space)
-- [ ] **4.3** On match, swallow the event (return `nil`) and signal a toggle
-- [ ] **4.4** Add the event tap to the current `CFRunLoop` (shared with the NSApplication run loop)
-- [ ] **4.5** Expose a mechanism (channel or callback) to notify `main.rs` of hotkey presses
+- [x] **4.3** On match, swallow the event (return `nil`) and signal a toggle
+- [x] **4.4** Add the event tap to the current `CFRunLoop` (shared with the NSApplication run loop)
+- [x] **4.5** Expose a mechanism (channel or callback) to notify `main.rs` of hotkey presses
 
 ## 5. Audio Recorder (`recorder.rs`)
 

@@ -37,7 +37,7 @@ make run
 Two one-time manual steps:
 
 1. **Microphone** — macOS prompts automatically on first recording attempt.
-2. **Accessibility** — Add `target/whisper.app` to _System Settings → Privacy & Security →
+2. **Accessibility** — Add `target/Whisper.app` to _System Settings → Privacy & Security →
    Accessibility_. Required for the global hotkey and synthetic paste.
 
 ## Usage

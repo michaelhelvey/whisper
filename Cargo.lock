@@ -1021,6 +1021,7 @@ dependencies = [
 name = "whisper"
 version = "0.1.0"
 dependencies = [
+ "core-foundation",
  "core-graphics",
  "cpal",
  "objc2",

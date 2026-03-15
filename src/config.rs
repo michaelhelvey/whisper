@@ -3,9 +3,9 @@
 /// Virtual keycode for the hotkey (49 = Space).
 pub const HOTKEY_KEYCODE: u16 = 49;
 
-/// Modifier flags for the hotkey (option/alt key).
-/// Uses CGEventFlags values: kCGEventFlagMaskAlternate = 0x00080000.
-pub const HOTKEY_MODIFIER_FLAGS: u64 = 0x00080000;
+/// Modifier flags for the hotkey (control key).
+/// Uses CGEventFlags values: kCGEventFlagMaskControl = 0x00040000.
+pub const HOTKEY_MODIFIER_FLAGS: u64 = 0x00040000;
 
 /// Path to the whisper model file (tilde-expanded at runtime via `model_path()`).
 const MODEL_PATH: &str = "~/.config/whisper/models/ggml-small.en.bin";

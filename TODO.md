@@ -51,11 +51,11 @@ Architecture document (read this first): ./ARCHITECTURE.md
 
 ## 6. Transcriber (`transcriber.rs`)
 
-- [ ] **6.1** Implement lazy model loading: load `WhisperContext` from `config::MODEL_PATH` on
+- [x] **6.1** Implement lazy model loading: load `WhisperContext` from `config::MODEL_PATH` on
       first use
-- [ ] **6.2** Implement `transcribe(pcm: &[f32]) -> String`: create `WhisperState`, run `full()`,
+- [x] **6.2** Implement `transcribe(pcm: &[f32]) -> String`: create `WhisperState`, run `full()`,
       extract and join segment texts
-- [ ] **6.3** Configure whisper params: language from `config::LANGUAGE`, single-segment mode
+- [x] **6.3** Configure whisper params: language from `config::LANGUAGE`, single-segment mode
       suitable for dictation
 
 ## 7. Text Injector (`injector.rs`)

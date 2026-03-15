@@ -84,6 +84,11 @@ define_class!(
                                 .expect("recorder must exist in Recording state")
                                 .stop();
                             orch.recorder = None;
+                            eprintln!(
+                                "recording stopped: {} samples ({:.1}s at 16kHz)",
+                                pcm.len(),
+                                pcm.len() as f64 / 16_000.0
+                            );
                             orch.menu_bar.set_state(IconState::Transcribing, mtm);
                             orch.state = AppState::Transcribing;
 
@@ -94,6 +99,7 @@ define_class!(
                                         eprintln!("transcription error: {e}");
                                         String::new()
                                     });
+                                eprintln!("transcription result: {:?}", text);
                                 let _ = tx.send(text);
                             });
                         }
@@ -108,7 +114,10 @@ define_class!(
                     && let Ok(text) = orch.transcript_rx.try_recv()
                 {
                     if !text.is_empty() {
+                        eprintln!("injecting text: {:?}", text);
                         injector::inject(&text);
+                    } else {
+                        eprintln!("transcription returned empty text, skipping injection");
                     }
                     orch.menu_bar.set_state(IconState::Idle, mtm);
                     orch.state = AppState::Idle;

@@ -14,7 +14,7 @@ const MODEL_PATH: &str = "~/.config/whisper/models/ggml-small.en.bin";
 pub const LANGUAGE: &str = "en";
 
 /// Delay in milliseconds after synthetic paste before restoring the pasteboard.
-pub const PASTE_DELAY_MS: u64 = 50;
+pub const PASTE_DELAY_MS: u64 = 500;
 
 /// Returns the expanded model path, replacing a leading `~` with the user's home directory.
 pub fn model_path() -> String {

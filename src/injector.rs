@@ -93,11 +93,13 @@ fn post_paste_keystroke() {
 
 /// Injects `text` into the currently focused application by:
 ///
-/// 1. Saving the current pasteboard contents.
-/// 2. Placing `text` on the pasteboard.
-/// 3. Synthesising a ⌘V keystroke.
-/// 4. Waiting [`config::PASTE_DELAY_MS`] ms for the target app to process the paste.
-/// 5. Restoring the original pasteboard contents.
+/// 1. Placing `text` on the pasteboard.
+/// 2. Synthesising a ⌘V keystroke.
+/// 3. Waiting [`config::PASTE_DELAY_MS`] ms for the target app to process the paste.
+/// 4. Restoring the original pasteboard contents on a background thread.
+///
+/// If the synthetic ⌘V fails (e.g. missing Accessibility permission), the text
+/// remains on the clipboard so the user can paste manually.
 pub fn inject(text: &str) {
     let pb = NSPasteboard::generalPasteboard();
 
@@ -109,10 +111,19 @@ pub fn inject(text: &str) {
     let ns_string = NSString::from_str(text);
     pb.setString_forType(&ns_string, unsafe { NSPasteboardTypeString });
 
+    // Small delay to ensure pasteboard update propagates before the paste event.
+    thread::sleep(Duration::from_millis(10));
+
     // 7.3 — Post synthetic ⌘V.
     post_paste_keystroke();
 
-    // 7.4 — Wait for target app to process the paste, then restore.
-    thread::sleep(Duration::from_millis(config::PASTE_DELAY_MS));
-    restore_pasteboard(&pb, &saved);
+    // 7.4 — Restore the original pasteboard after a delay, on a background thread
+    // so we don't block the main run loop and risk restoring before the target
+    // app has finished processing the paste.
+    thread::spawn(move || {
+        thread::sleep(Duration::from_millis(config::PASTE_DELAY_MS));
+        // Re-acquire the pasteboard on this thread.
+        let pb = NSPasteboard::generalPasteboard();
+        restore_pasteboard(&pb, &saved);
+    });
 }

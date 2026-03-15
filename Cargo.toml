@@ -19,3 +19,4 @@ core-foundation = "0.10"
 core-graphics = "0.24"
 cpal = "0.15"
 whisper-rs = { version = "0.16", features = ["metal"] }
+libc = "0.2"

@@ -86,9 +86,50 @@ Architecture document (read this first): ./ARCHITECTURE.md
 - [x] **9.3** Verify `make download-model` fetches the whisper model to `~/.config/whisper/models/`
 - [x] **9.4** Remove quarantine with `xattr -cr` and test `make run` launches the menu bar app
 
-## 10. Permissions & Smoke Test
+## 10. Fix Accessibility Permission for `make run`
 
-- [ ] **10.1** Confirm microphone permission prompt appears on first recording attempt
-- [ ] **10.2** Add `.app` to Accessibility in System Settings, confirm hotkey works globally
-- [ ] **10.3** End-to-end test: press hotkey → record → release hotkey → transcript pasted into a
-      text field
+### Problem
+
+`CGEventTap` (global hotkey) requires Accessibility permission. When the binary is run directly from
+the terminal (`./target/Whisper.app/Contents/MacOS/whisper`), it inherits the terminal's
+Accessibility grant and everything works. When launched via `make run` → `open target/Whisper.app`,
+the `.app` bundle needs its own Accessibility permission.
+
+The current `make bundle` target uses ad-hoc codesigning (`codesign --force --sign -`). **Ad-hoc
+signing produces a different code signature on every build.** macOS matches Accessibility grants by
+code signature, so the permission is invalidated after each rebuild. The user has added the app to
+Accessibility, but it silently stops working after the next `make bundle`.
+
+### What works now
+
+- Running the binary directly from the terminal: **works** (inherits terminal's Accessibility)
+- Recording, transcription, and text injection: **all verified working**
+- Transcription output is logged to `~/.config/whisper/whisper.log` (stderr is redirected there in
+  `main()` so we can debug when launched via `open`)
+- The event tap failure is handled gracefully (warns in log, app still shows in menu bar)
+
+### Current state of the code
+
+- `main.rs` redirects stderr to `~/.config/whisper/whisper.log` on startup (added `libc` dep for
+  `dup2`)
+- `config.rs` has `expand_tilde()` made `pub` for the log path
+- `hotkey.rs` returns early with a warning instead of panicking when `CGEventTap::new()` fails
+- `injector.rs` restores pasteboard on a background thread with 500ms delay
+- `Makefile` bundle target includes `codesign --force --sign -`
+
+### Tasks
+
+- [ ] **10.1** Create a stable local code-signing identity so the signature doesn't change between
+      builds. Options:
+  - Create a self-signed certificate in the login keychain (`certtool c` or Keychain Access →
+    Certificate Assistant → Create a Certificate → Code Signing`) named e.g. "Whisper Dev"
+  - Update `Makefile` to sign with `codesign --force --sign "Whisper Dev" $(APP_BUNDLE)`
+  - No valid signing identities exist yet (`security find-identity -v -p codesigning` returns 0)
+- [ ] **10.2** After signing with stable identity, add `.app` to Accessibility **once** and confirm
+      `make run` launches with a working hotkey (check `~/.config/whisper/whisper.log` — should NOT
+      contain the "failed to create CGEventTap" warning)
+- [ ] **10.3** Confirm microphone permission prompt appears on first recording attempt
+- [ ] **10.4** End-to-end test via `make run`: press Ctrl+Space → 🔴 recording → press Ctrl+Space →
+      ⏳ transcribing → transcript pasted into focused text field → 🎤 idle
+- [ ] **10.5** Clean up: remove stderr→log-file redirect from `main.rs` and `libc` dependency once
+      debugging is complete (or keep it as a feature — your call)

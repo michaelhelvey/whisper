@@ -22,7 +22,7 @@ pub fn model_path() -> String {
 }
 
 /// Expands a leading `~` in `path` to the value of the `HOME` environment variable.
-fn expand_tilde(path: &str) -> String {
+pub fn expand_tilde(path: &str) -> String {
     if let Some(rest) = path.strip_prefix('~')
         && let Ok(home) = std::env::var("HOME")
     {

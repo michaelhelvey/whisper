@@ -136,6 +136,17 @@ impl TimerTarget {
 }
 
 fn main() {
+    // Redirect stderr to a log file so we can debug when launched via `open`.
+    let log_path = config::expand_tilde("~/.config/whisper/whisper.log");
+    if let Ok(file) = std::fs::File::create(&log_path) {
+        use std::os::unix::io::IntoRawFd;
+        let fd = file.into_raw_fd();
+        unsafe {
+            libc::dup2(fd, 2); // redirect stderr
+            libc::close(fd);
+        }
+    }
+
     let mtm = MainThreadMarker::new().expect("must run on the main thread");
 
     // 8.1 — Initialize menu bar (NSApplication, status item, menu).

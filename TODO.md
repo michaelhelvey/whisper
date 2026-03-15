@@ -81,10 +81,10 @@ Architecture document (read this first): ./ARCHITECTURE.md
 
 ## 9. Build & Bundle
 
-- [ ] **9.1** Verify `make build` produces a working release binary
-- [ ] **9.2** Verify `make bundle` assembles a valid `.app` bundle with Info.plist and binary
-- [ ] **9.3** Verify `make download-model` fetches the whisper model to `~/.config/whisper/models/`
-- [ ] **9.4** Remove quarantine with `xattr -cr` and test `make run` launches the menu bar app
+- [x] **9.1** Verify `make build` produces a working release binary
+- [x] **9.2** Verify `make bundle` assembles a valid `.app` bundle with Info.plist and binary
+- [x] **9.3** Verify `make download-model` fetches the whisper model to `~/.config/whisper/models/`
+- [x] **9.4** Remove quarantine with `xattr -cr` and test `make run` launches the menu bar app
 
 ## 10. Permissions & Smoke Test
 

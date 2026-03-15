@@ -69,14 +69,14 @@ Architecture document (read this first): ./ARCHITECTURE.md
 ## 8. Main Orchestration (`main.rs`)
 
 - [x] **8.1** Initialize menu bar (NSApplication, status item, menu)
-- [ ] **8.2** Initialize global hotkey event tap
-- [ ] **8.3** Implement state machine: Idle → Recording → Transcribing → Pasting → Idle
-- [ ] **8.4** On hotkey press while idle: update icon to recording, spawn background thread, start
+- [x] **8.2** Initialize global hotkey event tap
+- [x] **8.3** Implement state machine: Idle → Recording → Transcribing → Pasting → Idle
+- [x] **8.4** On hotkey press while idle: update icon to recording, spawn background thread, start
       recorder
-- [ ] **8.5** On hotkey press while recording: stop recorder, update icon to transcribing, run
+- [x] **8.5** On hotkey press while recording: stop recorder, update icon to transcribing, run
       transcription on background thread
-- [ ] **8.6** After transcription: dispatch back to main thread, inject text, restore icon to idle
-- [ ] **8.7** Wire communication between components via `std::sync::mpsc` channels or
+- [x] **8.6** After transcription: dispatch back to main thread, inject text, restore icon to idle
+- [x] **8.7** Wire communication between components via `std::sync::mpsc` channels or
       `Arc<Mutex<State>>`
 
 ## 9. Build & Bundle

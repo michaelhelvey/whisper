@@ -7,6 +7,7 @@ edition = "2024"
 objc2 = "0.6"
 objc2-foundation = { version = "0.3", features = [
     "NSString", "NSRunLoop", "NSThread", "NSNotification", "NSArray", "NSData",
+    "NSTimer",
 ] }
 objc2-app-kit = { version = "0.3", features = [
     "NSApplication", "NSStatusBar", "NSStatusItem", "NSStatusBarButton",

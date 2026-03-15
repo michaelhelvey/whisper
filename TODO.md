@@ -42,11 +42,11 @@ Architecture document (read this first): ./ARCHITECTURE.md
 
 ## 5. Audio Recorder (`recorder.rs`)
 
-- [ ] **5.1** Open the default input device via `cpal` and query its supported configs
-- [ ] **5.2** Build an input stream at 16kHz mono f32 (or native rate if 16kHz unsupported)
-- [ ] **5.3** Implement `start()`: begin stream, push samples into `Arc<Mutex<Vec<f32>>>`
-- [ ] **5.4** Implement `stop() -> Vec<f32>`: drop the stream, return accumulated buffer
-- [ ] **5.5** If recorded at non-16kHz rate, resample to 16kHz using `rubato` (add dependency if
+- [x] **5.1** Open the default input device via `cpal` and query its supported configs
+- [x] **5.2** Build an input stream at 16kHz mono f32 (or native rate if 16kHz unsupported)
+- [x] **5.3** Implement `start()`: begin stream, push samples into `Arc<Mutex<Vec<f32>>>`
+- [x] **5.4** Implement `stop() -> Vec<f32>`: drop the stream, return accumulated buffer
+- [x] **5.5** If recorded at non-16kHz rate, resample to 16kHz using `rubato` (add dependency if
       needed)
 
 ## 6. Transcriber (`transcriber.rs`)

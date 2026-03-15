@@ -60,11 +60,11 @@ Architecture document (read this first): ./ARCHITECTURE.md
 
 ## 7. Text Injector (`injector.rs`)
 
-- [ ] **7.1** Read and stash current `NSPasteboard.generalPasteboard` contents (all items/types)
-- [ ] **7.2** Clear pasteboard and write transcript string as `NSStringPboardType`
-- [ ] **7.3** Create and post `CGEvent` key-down + key-up for `⌘V` (keycode 9 + command flag) to
+- [x] **7.1** Read and stash current `NSPasteboard.generalPasteboard` contents (all items/types)
+- [x] **7.2** Clear pasteboard and write transcript string as `NSStringPboardType`
+- [x] **7.3** Create and post `CGEvent` key-down + key-up for `⌘V` (keycode 9 + command flag) to
       `kCGHIDEventTap`
-- [ ] **7.4** After a 50ms `thread::sleep`, restore original pasteboard contents
+- [x] **7.4** After a 50ms `thread::sleep`, restore original pasteboard contents
 
 ## 8. Main Orchestration (`main.rs`)
 

@@ -6,12 +6,13 @@ edition = "2024"
 [dependencies]
 objc2 = "0.6"
 objc2-foundation = { version = "0.3", features = [
-    "NSString", "NSRunLoop", "NSThread", "NSNotification",
+    "NSString", "NSRunLoop", "NSThread", "NSNotification", "NSArray", "NSData",
 ] }
 objc2-app-kit = { version = "0.3", features = [
     "NSApplication", "NSStatusBar", "NSStatusItem", "NSStatusBarButton",
-    "NSMenu", "NSMenuItem", "NSImage", "NSPasteboard", "NSEvent",
-    "NSRunningApplication", "NSButton", "NSControl", "NSResponder", "NSView",
+    "NSMenu", "NSMenuItem", "NSImage", "NSPasteboard", "NSPasteboardItem",
+    "NSEvent", "NSRunningApplication", "NSButton", "NSControl", "NSResponder",
+    "NSView",
 ] }
 core-foundation = "0.10"
 core-graphics = "0.24"

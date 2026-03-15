@@ -1,0 +1,18 @@
+[package]
+name = "whisper"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+objc2 = "0.6"
+objc2-foundation = { version = "0.3", features = [
+    "NSString", "NSRunLoop", "NSThread", "NSNotification",
+] }
+objc2-app-kit = { version = "0.3", features = [
+    "NSApplication", "NSStatusBar", "NSStatusItem", "NSStatusBarButton",
+    "NSMenu", "NSMenuItem", "NSImage", "NSPasteboard", "NSEvent",
+    "NSRunningApplication", "NSButton", "NSControl", "NSResponder", "NSView",
+] }
+core-graphics = "0.24"
+cpal = "0.15"
+whisper-rs = { version = "0.16", features = ["metal"] }

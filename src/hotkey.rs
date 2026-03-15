@@ -18,15 +18,15 @@ use crate::config;
 /// The tap is added to the current `CFRunLoop`, which must be the main thread's run
 /// loop (shared with `NSApplication`).
 ///
-/// # Panics
-///
-/// Panics if the event tap cannot be created (typically because the process lacks
-/// Accessibility permission).
+/// If the event tap cannot be created (typically because the process lacks
+/// Accessibility permission), a warning is printed to stderr and the receiver
+/// will never fire. The app still launches so the user can see it in the menu
+/// bar and grant the necessary permission.
 pub fn install() -> mpsc::Receiver<()> {
     let (tx, rx) = mpsc::channel();
 
     // 4.1 — Create a CGEventTap listening for key-down events.
-    let tap = CGEventTap::new(
+    let tap = match CGEventTap::new(
         CGEventTapLocation::HID,
         CGEventTapPlacement::HeadInsertEventTap,
         CGEventTapOptions::Default,
@@ -57,11 +57,16 @@ pub fn install() -> mpsc::Receiver<()> {
 
             Some(event.clone())
         },
-    )
-    .expect(
-        "failed to create CGEventTap — grant Accessibility permission in \
-         System Settings → Privacy & Security → Accessibility",
-    );
+    ) {
+        Ok(tap) => tap,
+        Err(()) => {
+            eprintln!(
+                "WARNING: failed to create CGEventTap — grant Accessibility permission in \
+                 System Settings → Privacy & Security → Accessibility, then restart the app"
+            );
+            return rx;
+        }
+    };
 
     // 4.4 — Add the event tap to the current CFRunLoop.
     let loop_source = tap

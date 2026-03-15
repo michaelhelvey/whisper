@@ -14,6 +14,7 @@ bundle: build
 	mkdir -p $(APP_BUNDLE)/Contents/MacOS
 	cp target/release/$(BIN_NAME) $(APP_BUNDLE)/Contents/MacOS/
 	cp Info.plist $(APP_BUNDLE)/Contents/
+	codesign --force --sign - $(APP_BUNDLE)
 
 download-model:
 	mkdir -p $(MODEL_DIR)

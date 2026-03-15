@@ -29,7 +29,7 @@ setup: download-model
 	@echo "Add $(APP_BUNDLE) to System Settings → Privacy & Security → Accessibility"
 
 run: bundle
-	open $(APP_BUNDLE)
+	$(APP_BUNDLE)/Contents/MacOS/$(BIN_NAME)
 
 clean:
 	cargo clean

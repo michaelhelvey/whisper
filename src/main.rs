@@ -8,6 +8,7 @@ mod transcriber;
 use std::cell::RefCell;
 use std::sync::mpsc;
 
+use log::{error, info, warn};
 use objc2::rc::Retained;
 use objc2::{define_class, msg_send, sel, MainThreadMarker, MainThreadOnly};
 use objc2_app_kit::NSApplication;
@@ -62,7 +63,7 @@ define_class!(
                             match Recorder::new() {
                                 Ok(mut rec) => {
                                     if let Err(e) = rec.start() {
-                                        eprintln!("failed to start recording: {e}");
+                                        error!("failed to start recording: {e}");
                                         orch.menu_bar.set_state(IconState::Idle, mtm);
                                         continue;
                                     }
@@ -70,7 +71,7 @@ define_class!(
                                     orch.state = AppState::Recording;
                                 }
                                 Err(e) => {
-                                    eprintln!("failed to create recorder: {e}");
+                                    error!("failed to create recorder: {e}");
                                     orch.menu_bar.set_state(IconState::Idle, mtm);
                                 }
                             }
@@ -84,7 +85,7 @@ define_class!(
                                 .expect("recorder must exist in Recording state")
                                 .stop();
                             orch.recorder = None;
-                            eprintln!(
+                            info!(
                                 "recording stopped: {} samples ({:.1}s at 16kHz)",
                                 pcm.len(),
                                 pcm.len() as f64 / 16_000.0
@@ -96,10 +97,10 @@ define_class!(
                             std::thread::spawn(move || {
                                 let text =
                                     transcriber::transcribe(&pcm).unwrap_or_else(|e| {
-                                        eprintln!("transcription error: {e}");
+                                        error!("transcription error: {e}");
                                         String::new()
                                     });
-                                eprintln!("transcription result: {:?}", text);
+                                info!("transcription result: {:?}", text);
                                 let _ = tx.send(text);
                             });
                         }
@@ -114,10 +115,10 @@ define_class!(
                     && let Ok(text) = orch.transcript_rx.try_recv()
                 {
                     if !text.is_empty() {
-                        eprintln!("injecting text: {:?}", text);
+                        info!("injecting text: {:?}", text);
                         injector::inject(&text);
                     } else {
-                        eprintln!("transcription returned empty text, skipping injection");
+                        warn!("transcription returned empty text, skipping injection");
                     }
                     orch.menu_bar.set_state(IconState::Idle, mtm);
                     orch.state = AppState::Idle;
@@ -136,15 +137,15 @@ impl TimerTarget {
 }
 
 fn main() {
-    // Redirect stderr to a log file so we can debug when launched via `open`.
+    // Initialize file-based logging so we can debug when launched via `open`.
     let log_path = config::expand_tilde("~/.config/whisper/whisper.log");
     if let Ok(file) = std::fs::File::create(&log_path) {
-        use std::os::unix::io::IntoRawFd;
-        let fd = file.into_raw_fd();
-        unsafe {
-            libc::dup2(fd, 2); // redirect stderr
-            libc::close(fd);
-        }
+        simplelog::WriteLogger::init(
+            simplelog::LevelFilter::Info,
+            simplelog::Config::default(),
+            file,
+        )
+        .expect("failed to initialize logger");
     }
 
     let mtm = MainThreadMarker::new().expect("must run on the main thread");

@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use std::sync::Mutex;
 
 use whisper_rs::{
@@ -12,7 +10,9 @@ use crate::config;
 static CONTEXT: Mutex<Option<WhisperContext>> = Mutex::new(None);
 
 /// Returns a reference-counted handle to the loaded context, loading it if necessary.
-fn with_context<T>(f: impl FnOnce(&WhisperContext) -> Result<T, WhisperError>) -> Result<T, WhisperError> {
+fn with_context<T>(
+    f: impl FnOnce(&WhisperContext) -> Result<T, WhisperError>,
+) -> Result<T, WhisperError> {
     let mut guard = CONTEXT.lock().expect("whisper context lock poisoned");
     if guard.is_none() {
         let path = config::model_path();

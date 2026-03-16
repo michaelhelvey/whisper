@@ -1,8 +1,6 @@
-#![allow(dead_code)]
-
 use std::sync::mpsc;
 
-use core_foundation::runloop::{kCFRunLoopCommonModes, CFRunLoop};
+use core_foundation::runloop::{CFRunLoop, kCFRunLoopCommonModes};
 use core_graphics::event::{
     CGEvent, CGEventFlags, CGEventTap, CGEventTapLocation, CGEventTapOptions, CGEventTapPlacement,
     CGEventTapProxy, CGEventType, EventField,
@@ -60,8 +58,8 @@ pub fn install() -> mpsc::Receiver<()> {
     ) {
         Ok(tap) => tap,
         Err(()) => {
-            eprintln!(
-                "WARNING: failed to create CGEventTap — grant Accessibility permission in \
+            log::warn!(
+                "failed to create CGEventTap — grant Accessibility permission in \
                  System Settings → Privacy & Security → Accessibility, then restart the app"
             );
             return rx;

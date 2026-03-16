@@ -1,8 +1,6 @@
-#![allow(dead_code)]
-
 use objc2::rc::Retained;
 use objc2::sel;
-use objc2::{define_class, msg_send, MainThreadMarker, MainThreadOnly};
+use objc2::{MainThreadMarker, MainThreadOnly, define_class, msg_send};
 use objc2_app_kit::{
     NSApplication, NSApplicationActivationPolicy, NSMenu, NSMenuItem, NSStatusBar, NSStatusItem,
     NSVariableStatusItemLength,

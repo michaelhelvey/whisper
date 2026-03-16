@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use std::sync::{Arc, Mutex};
 
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
@@ -37,16 +35,15 @@ impl Recorder {
             .map_err(|e| format!("failed to get default input config: {e}"))?;
 
         // Try to find a config that supports 16 kHz mono.
-        let (config, native_sample_rate) =
-            if let Some(cfg) = find_16khz_config(&device) {
-                (cfg, TARGET_SAMPLE_RATE)
-            } else {
-                // Fall back to the default config (we'll resample later).
-                let rate = default_config.sample_rate().0;
-                let mut cfg: StreamConfig = default_config.into();
-                cfg.channels = 1;
-                (cfg, rate)
-            };
+        let (config, native_sample_rate) = if let Some(cfg) = find_16khz_config(&device) {
+            (cfg, TARGET_SAMPLE_RATE)
+        } else {
+            // Fall back to the default config (we'll resample later).
+            let rate = default_config.sample_rate().0;
+            let mut cfg: StreamConfig = default_config.into();
+            cfg.channels = 1;
+            (cfg, rate)
+        };
 
         Ok(Self {
             device,
@@ -82,14 +79,13 @@ impl Recorder {
                     } else {
                         // Mix down to mono by averaging channels.
                         for chunk in data.chunks(channels) {
-                            let sample: f32 =
-                                chunk.iter().sum::<f32>() / channels as f32;
+                            let sample: f32 = chunk.iter().sum::<f32>() / channels as f32;
                             buf.push(sample);
                         }
                     }
                 },
                 move |err| {
-                    eprintln!("audio input stream error: {err}");
+                    log::error!("audio input stream error: {err}");
                 },
                 None, // no timeout
             )
@@ -162,8 +158,7 @@ fn resample(samples: &[f32], from_rate: u32, to_rate: u32) -> Vec<f32> {
         let frac = src_idx - idx_floor as f64;
 
         let sample = if idx_floor + 1 < samples.len() {
-            samples[idx_floor] as f64 * (1.0 - frac)
-                + samples[idx_floor + 1] as f64 * frac
+            samples[idx_floor] as f64 * (1.0 - frac) + samples[idx_floor + 1] as f64 * frac
         } else if idx_floor < samples.len() {
             samples[idx_floor] as f64
         } else {
